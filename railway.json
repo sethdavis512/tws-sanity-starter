@@ -1,0 +1,73 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "sleepApplication": false,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "NODE_ENV": "production",
+        "VITE_SANITY_PROJECT_ID": "cx445xzd",
+        "VITE_SANITY_DATASET": "production",
+        "VITE_SANITY_STUDIO_URL": "${{RAILWAY_STATIC_URL}}"
+      }
+    }
+  },
+  "services": [
+    {
+      "name": "web",
+      "source": {
+        "repo": ".",
+        "workdir": "web"
+      },
+      "build": {
+        "buildCommand": "npm ci && npm run build",
+        "watchPatterns": [
+          "web/**"
+        ]
+      },
+      "deploy": {
+        "startCommand": "npm run start",
+        "healthcheckPath": "/",
+        "healthcheckTimeout": 100
+      },
+      "variables": {
+        "PORT": "${{PORT}}",
+        "NODE_ENV": "production",
+        "VITE_SANITY_PROJECT_ID": "cx445xzd",
+        "VITE_SANITY_DATASET": "production",
+        "VITE_SANITY_STUDIO_URL": "${{studio.RAILWAY_STATIC_URL}}",
+        "SANITY_VIEWER_TOKEN": "${{SANITY_VIEWER_TOKEN}}",
+        "SESSION_SECRET": "${{SESSION_SECRET}}"
+      }
+    },
+    {
+      "name": "studio",
+      "source": {
+        "repo": ".",
+        "workdir": "studio"
+      },
+      "build": {
+        "buildCommand": "npm ci && npm run build",
+        "watchPatterns": [
+          "studio/**"
+        ]
+      },
+      "deploy": {
+        "startCommand": "npm run start",
+        "healthcheckPath": "/",
+        "healthcheckTimeout": 100
+      },
+      "variables": {
+        "PORT": "${{PORT}}",
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
